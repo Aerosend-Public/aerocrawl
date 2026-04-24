@@ -1,0 +1,25 @@
+{$AEROCRAWL_DOMAIN} {
+    encode gzip zstd
+
+    reverse_proxy localhost:8001 {
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+
+        transport http {
+            read_timeout 300s
+            write_timeout 300s
+        }
+    }
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "no-referrer"
+    }
+
+    log {
+        output file /var/log/caddy/aerocrawl.log
+        format json
+    }
+}
