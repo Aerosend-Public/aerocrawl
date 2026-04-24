@@ -13,7 +13,6 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379/1"
 
     PROXY_URL: str = ""
-    PROXY_URL_IPROYAL: str = ""
 
     MAX_BROWSER_CONTEXTS: int = 5
 

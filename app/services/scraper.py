@@ -91,8 +91,6 @@ def _resolve_proxy(proxy: str) -> str:
     """Map shortcut names to actual proxy URLs."""
     if proxy == "proxybase":
         return settings.PROXY_URL
-    if proxy == "iproyal":
-        return settings.PROXY_URL_IPROYAL
     return proxy
 
 
@@ -360,16 +358,15 @@ async def _scrape_url_impl(
     only_main_content: bool,
     actions: Optional[List[dict]],
 ) -> ScrapeResult:
-    """Core scraping orchestrator (9-step fallback chain, no cache).
+    """Core scraping orchestrator (fallback chain, no cache).
 
     Chain:
       0. Reddit CF Worker (if reddit.com)
       1. Static fetch (httpx, no browser)
       2. Playwright+stealth (no proxy)
       3-4. Playwright+stealth + ProxyBase (×2)
-      5-6. Playwright+stealth + IPRoyal (×2)
-      7. CF General Proxy
-      8. Tavily Extract (paid fallback) — replaced by Zyte in Phase 2
+      5. CF General Proxy
+      6. Tavily Extract (paid fallback) — replaced by Zyte in Phase 2
     """
     start = time.monotonic()
     result = ScrapeResult()
@@ -588,32 +585,17 @@ async def _scrape_url_impl(
 
             # Build proxy attempt list
             if caller_proxy:
-                # Caller specified a proxy — use it for first 2 attempts, then IPRoyal
+                # Caller specified a proxy — use it for 2 attempts
                 proxy_attempts = [
                     (caller_proxy, "playwright+stealth+proxy"),
                     (caller_proxy, "playwright+stealth+proxy"),
                 ]
-                if settings.PROXY_URL_IPROYAL and caller_proxy != settings.PROXY_URL_IPROYAL:
-                    proxy_attempts.extend([
-                        (settings.PROXY_URL_IPROYAL, "playwright+stealth+iproyal"),
-                        (settings.PROXY_URL_IPROYAL, "playwright+stealth+iproyal"),
-                    ])
             else:
-                # Default: ProxyBase x2 then IPRoyal x2.
-                # If domain memoization prefers iproyal, flip the order.
-                iproyal_first = preferred_method == "playwright+stealth+iproyal"
-                proxybase_block = [
+                # Default: ProxyBase x2.
+                proxy_attempts = [
                     (settings.PROXY_URL, "playwright+stealth+proxybase"),
                     (settings.PROXY_URL, "playwright+stealth+proxybase"),
                 ] if settings.PROXY_URL else []
-                iproyal_block = [
-                    (settings.PROXY_URL_IPROYAL, "playwright+stealth+iproyal"),
-                    (settings.PROXY_URL_IPROYAL, "playwright+stealth+iproyal"),
-                ] if settings.PROXY_URL_IPROYAL else []
-                if iproyal_first:
-                    proxy_attempts.extend(iproyal_block + proxybase_block)
-                else:
-                    proxy_attempts.extend(proxybase_block + iproyal_block)
 
             for proxy_url, method_name in proxy_attempts:
                 pw_result, block = await _try_playwright(
