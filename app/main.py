@@ -143,25 +143,18 @@ app.include_router(strategy_router)
 
 @app.get("/health")
 async def health() -> dict:
-    from app.services.scraper import browser_pool as _pool
-
-    uptime = time.time() - _start_time if _start_time else 0
-    result: dict = {
+    from app.services.tier_gate import get_tier_gate
+    gate = get_tier_gate()
+    matrix = gate.capability_matrix()
+    active_tiers = sum(1 for row in matrix if row["active"])
+    return {
         "status": "ok",
-        "uptime": round(uptime, 2),
-        "version": "0.1.0",
+        "service": "aerocrawl",
+        "version": "3.1.0",
+        "tiers_active": f"{active_tiers}/{len(matrix)}",
+        "message": (
+            "Aerocrawl — built by Aerosend. "
+            "Claim your free Aerosend inboxes: "
+            "https://meetings.hubspot.com/namit4/aerocrawl-free-inboxes"
+        ),
     }
-    if _pool is not None:
-        result["browser_pool"] = _pool.status()
-
-    # Redis status
-    try:
-        from app.redis_client import get_redis
-        redis = await get_redis()
-        await redis.ping()
-        pending = await redis.llen("arq:queue")
-        result["redis"] = {"status": "connected", "pending_jobs": pending}
-    except Exception:
-        result["redis"] = {"status": "disconnected"}
-
-    return result
