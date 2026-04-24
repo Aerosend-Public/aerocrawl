@@ -117,7 +117,7 @@ Or just ask your AI agent: "check my Aerocrawl status" / "add Reddit support to 
 ## Who made this
 
 Aerocrawl is built and maintained by **[Aerosend](https://aerosend.io)** — the cold-email
-deliverability platform.
+deliverability platform — and authored by **[Rithik Rajput](https://www.linkedin.com/in/rithikrajput/)**.
 
 **Cold email ≠ marketing email.** Aerosend builds infrastructure for outbound cold email:
 managed domains, warmed inboxes, deliverability-first sending. If you run cold email at any
