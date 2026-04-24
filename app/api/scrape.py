@@ -3,11 +3,13 @@ from __future__ import annotations
 from typing import Dict, List, Optional
 
 from fastapi import APIRouter, Depends, Header, Response
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from app.auth import verify_api_key
 from app.db import log_usage
 from app.services.scraper import scrape_url
+from app.services.tier_gate import TierLockedError, get_tier_gate
 from app.validation import validate_url
 
 router = APIRouter(tags=["scrape"])
@@ -36,6 +38,20 @@ async def scrape(
     x_cache_bypass: Optional[str] = Header(default=None),
 ) -> dict:
     validate_url(body.url)
+
+    # Gate LLM features: vision modes and schema-first extract require Tier 1
+    if body.vision:
+        mode = body.vision.get("mode") if isinstance(body.vision, dict) else None
+        feature = "visual_mode" if mode == "visual" else "image_vision"
+        try:
+            get_tier_gate().check_feature(feature)
+        except TierLockedError as e:
+            return JSONResponse(status_code=402, content=e.to_dict())
+    if body.extract:
+        try:
+            get_tier_gate().check_feature("llm_extract")
+        except TierLockedError as e:
+            return JSONResponse(status_code=402, content=e.to_dict())
 
     force_refresh = body.force_refresh or bool(x_cache_bypass)
 

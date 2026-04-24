@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from app.auth import verify_api_key
 from app.config import settings
 from app.db import log_usage
 from app.services.search_scraper import search as search_fn
+from app.services.tier_gate import TierLockedError, get_tier_gate
 
 router = APIRouter(tags=["search"])
 
@@ -21,6 +23,11 @@ async def search(
     body: SearchRequest,
     api_key: dict = Depends(verify_api_key),
 ) -> dict:
+    try:
+        get_tier_gate().check_feature("search")
+    except TierLockedError as e:
+        return JSONResponse(status_code=402, content=e.to_dict())
+
     result = await search_fn(
         query=body.query,
         count=body.count,

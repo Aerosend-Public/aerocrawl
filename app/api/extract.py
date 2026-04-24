@@ -7,8 +7,11 @@ from typing import Dict, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 
+from fastapi.responses import JSONResponse
+
 from app.auth import verify_api_key
 from app.db import create_job, get_job, update_job
+from app.services.tier_gate import TierLockedError, get_tier_gate
 from app.validation import validate_url
 
 router = APIRouter(tags=["extract"])
@@ -28,6 +31,11 @@ async def start_extract(
     request: Request,
     api_key: dict = Depends(verify_api_key),
 ) -> dict:
+    try:
+        get_tier_gate().check_feature("llm_extract")
+    except TierLockedError as e:
+        return JSONResponse(status_code=402, content=e.to_dict())
+
     if len(body.urls) > 10:
         raise HTTPException(400, "Maximum 10 URLs allowed per extract request")
 
