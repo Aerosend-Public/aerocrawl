@@ -1,85 +1,52 @@
-#!/bin/bash
-# Deploy Aerocrawl to Hetzner VPS with safe rollback + health gate
-set -e
+#!/usr/bin/env bash
+# deploy/deploy.sh — update Aerocrawl in place on the VPS.
+# Run on the VPS as root:
+#   cd /opt/aerocrawl && ./deploy/deploy.sh
+#
+# What it does:
+#   1. git pull
+#   2. pip install any new deps
+#   3. snapshot /opt/aerocrawl to /opt/aerocrawl.prev (rollback target)
+#   4. systemctl restart aerocrawl aerocrawl-worker
+#   5. poll /health for 20s; revert from snapshot if unhealthy
 
-SERVER="root@203.0.113.42"
-REMOTE_DIR="/opt/aerocrawl"
-PREV_DIR="/opt/aerocrawl.prev"
-HEALTH_URL="http://localhost:8001/health"
+set -euo pipefail
 
-echo "=== Deploying Aerocrawl ==="
+INSTALL_DIR="/opt/aerocrawl"
+SNAPSHOT_DIR="/opt/aerocrawl.prev"
 
-# 0. Snapshot current code to .prev for rollback
-echo "Snapshotting current deployment to $PREV_DIR..."
-ssh "$SERVER" "if [ -d $REMOTE_DIR ]; then rm -rf $PREV_DIR && cp -a $REMOTE_DIR $PREV_DIR; fi"
+log() { echo -e "\e[1;34m[deploy]\e[0m $*"; }
+err() { echo -e "\e[1;31m[deploy]\e[0m $*" >&2; }
 
-# 1. Sync code
-echo "Syncing code..."
-rsync -avz --exclude '.venv' --exclude '__pycache__' --exclude 'data/*.db' \
-      --exclude '.env' --exclude '.git' --exclude 'tests' --exclude 'backups' \
-      ./ "$SERVER:$REMOTE_DIR/"
+cd "$INSTALL_DIR"
 
-# 2. Install dependencies
-echo "Installing dependencies..."
-ssh "$SERVER" "cd $REMOTE_DIR && python3 -m venv .venv && .venv/bin/pip install -q -r requirements.txt && .venv/bin/playwright install chromium --with-deps"
+log "git pull..."
+git fetch origin
+git reset --hard origin/main
 
-# 3. Ensure Redis is installed and running
-echo "Checking Redis..."
-ssh "$SERVER" "which redis-server || (apt-get update -qq && apt-get install -y -qq redis-server)"
-ssh "$SERVER" "systemctl enable redis-server && systemctl start redis-server"
+log "pip install..."
+venv/bin/pip install -r requirements.txt
 
-# 4. Copy service files (including backup timer)
-echo "Setting up systemd services..."
-ssh "$SERVER" "cp $REMOTE_DIR/deploy/aerocrawl.service /etc/systemd/system/ && \
-               cp $REMOTE_DIR/deploy/aerocrawl-worker.service /etc/systemd/system/ && \
-               cp $REMOTE_DIR/deploy/aerocrawl-backup.service /etc/systemd/system/ && \
-               cp $REMOTE_DIR/deploy/aerocrawl-backup.timer /etc/systemd/system/ && \
-               chmod +x $REMOTE_DIR/deploy/backup.sh && \
-               systemctl daemon-reload"
+log "Snapshotting current install for rollback..."
+rm -rf "$SNAPSHOT_DIR"
+cp -a "$INSTALL_DIR" "$SNAPSHOT_DIR"
 
-# 5. Enable and restart services
-echo "Restarting services..."
-ssh "$SERVER" "systemctl enable aerocrawl aerocrawl-worker aerocrawl-backup.timer && \
-               systemctl restart aerocrawl aerocrawl-worker && \
-               systemctl start aerocrawl-backup.timer"
+log "Restarting services..."
+systemctl restart aerocrawl aerocrawl-worker
 
-# 6. Post-deploy health gate (10 retries × 2s = 20s max)
-echo "Health gate: waiting for /health to respond..."
-HEALTH_OK=0
-for i in 1 2 3 4 5 6 7 8 9 10; do
-  if ssh "$SERVER" "curl -sS -f -m 3 $HEALTH_URL >/dev/null 2>&1"; then
-    HEALTH_OK=1
-    echo "  Health check passed on attempt $i"
-    break
-  fi
-  sleep 2
+source "$INSTALL_DIR/.env"
+log "Polling https://$AEROCRAWL_DOMAIN/health (up to 20s)..."
+for i in $(seq 1 10); do
+    if curl -sSfk "https://$AEROCRAWL_DOMAIN/health" >/dev/null 2>&1; then
+        log "Healthy after ${i}*2s. Deploy complete."
+        exit 0
+    fi
+    sleep 2
 done
 
-if [ "$HEALTH_OK" != "1" ]; then
-  echo "!!! Health check FAILED after 10 attempts — rolling back"
-  ssh "$SERVER" "systemctl stop aerocrawl aerocrawl-worker && \
-                 rm -rf $REMOTE_DIR && \
-                 mv $PREV_DIR $REMOTE_DIR && \
-                 systemctl restart aerocrawl aerocrawl-worker"
-  echo "Rolled back to previous deployment. Investigate the new code before retrying."
-  exit 1
-fi
-
-# 7. Check status
-echo "Checking status..."
-ssh "$SERVER" "systemctl is-active aerocrawl aerocrawl-worker aerocrawl-backup.timer"
-
-echo ""
-echo "=== Deployment complete ==="
-echo ""
-echo "Next steps (if first deploy):"
-echo "  1. Create .env on VPS: cp /opt/aerocrawl/.env.example /opt/aerocrawl/.env && nano /opt/aerocrawl/.env"
-echo "  2. Add to Caddy config (scraper.example.com block):"
-echo "     handle_path /scraper/* {"
-echo "       reverse_proxy localhost:8001"
-echo "     }"
-echo "  3. Reload Caddy: systemctl reload caddy"
-echo "  4. Restart services: systemctl restart aerocrawl aerocrawl-worker"
-echo "  5. Check admin key in logs: journalctl -u aerocrawl | head -30"
-echo ""
-echo "  URL: https://scraper.example.com/scraper/"
+err "Unhealthy after 20s. Rolling back..."
+rm -rf "$INSTALL_DIR"
+mv "$SNAPSHOT_DIR" "$INSTALL_DIR"
+systemctl restart aerocrawl aerocrawl-worker
+err "Rolled back. Check logs: journalctl -u aerocrawl -n 100"
+exit 1
