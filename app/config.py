@@ -58,11 +58,11 @@ class Settings(BaseSettings):
     NCBI_API_KEY: str = ""
     REDDIT_CLIENT_ID: str = ""
     REDDIT_CLIENT_SECRET: str = ""
-    REDDIT_USER_AGENT: str = "Aerocrawl/3.0 by rithik"
+    REDDIT_USER_AGENT: str = "Aerocrawl/3.0"
 
-    # V3: Slack alerts (shared Aerosend Slack, #content-pipeline)
+    # Optional Slack alerts. Set both to enable; leave blank to skip.
     SLACK_BOT_TOKEN: str = ""
-    SLACK_CHANNEL_PIPELINE: str = "C0REDACTED"
+    SLACK_CHANNEL_PIPELINE: str = ""
     ZYTE_ALERT_THRESHOLD_PCT: float = 0.80
 
     # V3.1: Per-key rate limits (Redis-backed sliding window)
