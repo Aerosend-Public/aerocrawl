@@ -186,7 +186,12 @@ class AcademicRoute:
         if not doi:
             return None
 
-        headers = {"User-Agent": "Aerocrawl/3.0 (mailto:aerocrawl@example.com)"}
+        # Crossref asks API users to identify themselves with a contact email (their
+        # "polite pool" guideline). Use ADMIN_EMAIL from config if set; fall back to a
+        # generic identifier if not.
+        from app.config import settings
+        contact = settings.ADMIN_EMAIL or "aerocrawl@example.com"
+        headers = {"User-Agent": f"Aerocrawl/3.0 (mailto:{contact})"}
         try:
             async with httpx.AsyncClient(timeout=20) as client:
                 resp = await client.get(f"{_CROSSREF_API}/{doi}", headers=headers)

@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     CF_PROXY_URL: str = ""  # General-purpose CF proxy Worker
 
     ADMIN_BOOTSTRAP_NAME: str = ""
+    # Contact email used in outbound User-Agents where upstream APIs request one
+    # (e.g., Crossref's "polite pool"). Falls back to a generic placeholder if empty.
+    ADMIN_EMAIL: str = ""
 
     AEROCRAWL_DB_PATH: str = "data/aerocrawl.db"
 
