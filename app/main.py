@@ -71,7 +71,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             print(f"{'=' * 60}\n")
             logger.info("Bootstrap admin key created", name=settings.ADMIN_BOOTSTRAP_NAME, key_id=key_id)
 
-    logger.info("NinjaScraper started", env=settings.ENV, port=settings.PORT)
+    logger.info("Aerocrawl started", env=settings.ENV, port=settings.PORT)
     yield
 
     # Shutdown browser pool
@@ -102,11 +102,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     except Exception:
         pass
 
-    logger.info("NinjaScraper stopping")
+    logger.info("Aerocrawl stopping")
 
 
 app = FastAPI(
-    title="NinjaScraper",
+    title="Aerocrawl",
     version="0.1.0",
     lifespan=lifespan,
 )

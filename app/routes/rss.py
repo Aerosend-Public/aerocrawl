@@ -37,7 +37,7 @@ class RSSRoute:
     async def fetch(self, url: str, only_main_content: bool = True) -> Optional[RouteResult]:
         try:
             async with httpx.AsyncClient(timeout=15, follow_redirects=True) as client:
-                resp = await client.get(url, headers={"User-Agent": "NinjaScraper/3.0"})
+                resp = await client.get(url, headers={"User-Agent": "Aerocrawl/3.0"})
         except Exception as exc:
             logger.debug("rss: fetch failed", url=url, error=str(exc))
             return None

@@ -4,16 +4,16 @@
 # Strategy:
 #   - sqlite3 .backup gives a consistent snapshot even with live WAL writes
 #   - compress with zstd (~5× smaller than raw)
-#   - keep last 30 days locally in /opt/ninjascraper/backups/
+#   - keep last 30 days locally in /opt/aerocrawl/backups/
 #   - daily backups named YYYY-MM-DD.db.zst; duplicates within a day overwrite
 #
 # Optional: if RCLONE_REMOTE env is set, also pushes to that remote
-# (e.g., hetzner-storage:ninjascraper-backups/). Gracefully no-ops if not set.
+# (e.g., hetzner-storage:aerocrawl-backups/). Gracefully no-ops if not set.
 
 set -euo pipefail
 
-DB_PATH="/opt/ninjascraper/data/ninjascraper.db"
-BACKUP_DIR="/opt/ninjascraper/backups"
+DB_PATH="/opt/aerocrawl/data/aerocrawl.db"
+BACKUP_DIR="/opt/aerocrawl/backups"
 RETAIN_DAYS=30
 RCLONE_REMOTE="${RCLONE_REMOTE:-}"
 
@@ -25,7 +25,7 @@ if [[ ! -f "$DB_PATH" ]]; then
 fi
 
 TODAY=$(date -u +%F)
-TMP_DB="/tmp/ninjascraper-backup-$$.db"
+TMP_DB="/tmp/aerocrawl-backup-$$.db"
 OUT="$BACKUP_DIR/$TODAY.db.zst"
 
 # sqlite3 isn't installed on VPS; use Python's sqlite3 .backup via a one-liner

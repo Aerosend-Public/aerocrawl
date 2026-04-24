@@ -1,4 +1,4 @@
-"""Stress test for NinjaScraper — measures throughput, latency, and stability.
+"""Stress test for Aerocrawl — measures throughput, latency, and stability.
 
 NOT a unit test — run manually against a live server. Excluded from pytest collection.
 
@@ -268,7 +268,7 @@ async def test_pool_saturation(client: httpx.AsyncClient, base_url: str, headers
 
 
 async def main():
-    parser = argparse.ArgumentParser(description="NinjaScraper Stress Test")
+    parser = argparse.ArgumentParser(description="Aerocrawl Stress Test")
     parser.add_argument("--base-url", required=True, help="Base URL (e.g., http://localhost:8001)")
     parser.add_argument("--api-key", required=True, help="API key (ns-xxx)")
     args = parser.parse_args()
@@ -277,7 +277,7 @@ async def main():
     headers = {"Authorization": f"Bearer {args.api_key}"}
 
     print(f"\n{'='*60}")
-    print(f"  NinjaScraper Stress Test")
+    print(f"  Aerocrawl Stress Test")
     print(f"  Target: {base_url}")
     print(f"{'='*60}\n")
 

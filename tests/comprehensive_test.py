@@ -1,4 +1,4 @@
-"""Comprehensive production test for NinjaScraper — tests every endpoint end-to-end.
+"""Comprehensive production test for Aerocrawl — tests every endpoint end-to-end.
 
 NOT a unit test — run manually against a live server:
     python tests/comprehensive_test.py --base-url https://scraper.example.com/scraper --api-key ns-xxx
@@ -492,7 +492,7 @@ async def test_stability(client: httpx.AsyncClient):
 
 
 async def main():
-    parser = argparse.ArgumentParser(description="NinjaScraper Comprehensive Test")
+    parser = argparse.ArgumentParser(description="Aerocrawl Comprehensive Test")
     parser.add_argument("--base-url", required=True)
     parser.add_argument("--api-key", required=True)
     args = parser.parse_args()
@@ -502,7 +502,7 @@ async def main():
     HEADERS = {"Authorization": f"Bearer {args.api_key}"}
 
     print(f"\n{'='*60}")
-    print(f"  NinjaScraper Comprehensive Production Test")
+    print(f"  Aerocrawl Comprehensive Production Test")
     print(f"  Target: {BASE_URL}")
     print(f"{'='*60}")
 

@@ -125,7 +125,7 @@ async def describe_image_with_gemini(image_url: str) -> Optional[str]:
     # Download the image
     try:
         async with httpx.AsyncClient(timeout=15) as client:
-            resp = await client.get(image_url, headers={"User-Agent": "NinjaScraper/3.0"})
+            resp = await client.get(image_url, headers={"User-Agent": "Aerocrawl/3.0"})
     except Exception:
         return None
     if resp.status_code != 200:

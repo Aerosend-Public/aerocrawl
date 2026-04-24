@@ -80,7 +80,7 @@ _shared_conn: Optional[aiosqlite.Connection] = None
 
 
 def _get_db_path() -> str:
-    return os.environ.get("AEROCRAWL_DB_PATH", "data/ninjascraper.db")
+    return os.environ.get("AEROCRAWL_DB_PATH", "data/aerocrawl.db")
 
 
 async def _get_db() -> aiosqlite.Connection:

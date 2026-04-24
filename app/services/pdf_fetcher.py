@@ -4,7 +4,7 @@ Detection is three-layer (URL → Content-Type → magic bytes). Magic bytes
 are authoritative because (a) servers lie about Content-Type and (b) arXiv
 and EDGAR routinely 302 to PDFs from HTML-looking URLs.
 
-pymupdf is AGPL-3.0 — fine for internal VPS use. If NinjaScraper ever gets
+pymupdf is AGPL-3.0 — fine for internal VPS use. If Aerocrawl ever gets
 distributed or sold as SaaS, swap primary to pdfplumber + pypdf.
 """
 from __future__ import annotations
@@ -40,7 +40,7 @@ async def fetch_pdf_bytes(url: str, timeout_s: float = _DEFAULT_TIMEOUT) -> Opti
     """Fetch a URL's bytes if it's a PDF. Returns (bytes, final_url) or None."""
     try:
         async with httpx.AsyncClient(timeout=timeout_s, follow_redirects=True) as client:
-            resp = await client.get(url, headers={"User-Agent": "NinjaScraper/3.0"})
+            resp = await client.get(url, headers={"User-Agent": "Aerocrawl/3.0"})
     except Exception as exc:
         logger.debug("pdf: fetch failed", url=url, error=str(exc))
         return None

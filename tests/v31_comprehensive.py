@@ -1,4 +1,4 @@
-"""NinjaScraper V3.1 comprehensive test — speed, concurrency, reliability, site matrix.
+"""Aerocrawl V3.1 comprehensive test — speed, concurrency, reliability, site matrix.
 
 Run against the live VPS:
     python tests/v31_comprehensive.py
@@ -495,7 +495,7 @@ def write_markdown_report(path: Path) -> None:
     passed = sum(1 for r in REPORT if r.status == "pass" and r.category != "_internal")
 
     with path.open("w") as f:
-        f.write(f"# NinjaScraper V3.1 Comprehensive Test Report\n\n")
+        f.write(f"# Aerocrawl V3.1 Comprehensive Test Report\n\n")
         f.write(f"**Run:** {datetime.now(timezone.utc).isoformat()}  \n")
         f.write(f"**Target:** {BASE_URL}  \n")
         f.write(f"**Overall:** {passed}/{total} passed\n\n")
@@ -572,7 +572,7 @@ def write_markdown_report(path: Path) -> None:
 # MAIN
 # ───────────────────────────────────────────────────────────────
 async def main() -> None:
-    print(f"NinjaScraper V3.1 comprehensive test against {BASE_URL}")
+    print(f"Aerocrawl V3.1 comprehensive test against {BASE_URL}")
     started = time.monotonic()
     async with httpx.AsyncClient() as client:
         await test_endpoint_sanity(client)

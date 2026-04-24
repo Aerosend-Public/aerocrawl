@@ -1,0 +1,11 @@
+[Unit]
+Description=Aerocrawl SQLite backup
+After=network.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/aerocrawl
+ExecStart=/opt/aerocrawl/deploy/backup.sh
+# Optional: point at an rclone remote for off-host backups
+# Environment=RCLONE_REMOTE=hetzner-storage:aerocrawl-backups/

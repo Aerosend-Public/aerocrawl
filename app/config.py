@@ -30,7 +30,7 @@ class Settings(BaseSettings):
 
     ADMIN_BOOTSTRAP_NAME: str = ""
 
-    AEROCRAWL_DB_PATH: str = "data/ninjascraper.db"
+    AEROCRAWL_DB_PATH: str = "data/aerocrawl.db"
 
     JS_HEAVY_DOMAINS: str = "twitter.com,x.com,instagram.com,facebook.com,linkedin.com,reddit.com,tiktok.com"
 
@@ -59,7 +59,7 @@ class Settings(BaseSettings):
     NCBI_API_KEY: str = ""
     REDDIT_CLIENT_ID: str = ""
     REDDIT_CLIENT_SECRET: str = ""
-    REDDIT_USER_AGENT: str = "NinjaScraper/3.0 by rithik"
+    REDDIT_USER_AGENT: str = "Aerocrawl/3.0 by rithik"
 
     # V3: Slack alerts (shared Aerosend Slack, #content-pipeline)
     SLACK_BOT_TOKEN: str = ""

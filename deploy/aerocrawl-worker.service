@@ -1,0 +1,17 @@
+[Unit]
+Description=Aerocrawl Worker - Async Job Processor
+After=network.target redis-server.service aerocrawl.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/aerocrawl
+EnvironmentFile=/opt/aerocrawl/.env
+ExecStart=/opt/aerocrawl/.venv/bin/arq app.workers.run.WorkerSettings
+Restart=always
+RestartSec=5
+Environment=TZ=Asia/Kolkata
+ReadWritePaths=/opt/aerocrawl/data /tmp /root/.cache/ms-playwright
+
+[Install]
+WantedBy=multi-user.target

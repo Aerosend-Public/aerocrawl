@@ -89,7 +89,7 @@ async def discover_urls(
     async with httpx.AsyncClient(
         follow_redirects=True,
         timeout=_TIMEOUT,
-        headers={"User-Agent": "NinjaScraper/1.0"},
+        headers={"User-Agent": "Aerocrawl/1.0"},
     ) as client:
         # Step 1: Fetch robots.txt for Sitemap directives
         robots_url = f"{base_url}/robots.txt"

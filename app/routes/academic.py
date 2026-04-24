@@ -186,7 +186,7 @@ class AcademicRoute:
         if not doi:
             return None
 
-        headers = {"User-Agent": "NinjaScraper/3.0 (mailto:aerocrawl@example.com)"}
+        headers = {"User-Agent": "Aerocrawl/3.0 (mailto:aerocrawl@example.com)"}
         try:
             async with httpx.AsyncClient(timeout=20) as client:
                 resp = await client.get(f"{_CROSSREF_API}/{doi}", headers=headers)
