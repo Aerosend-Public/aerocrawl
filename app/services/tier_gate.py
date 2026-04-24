@@ -48,7 +48,7 @@ class _Tier:
 
 
 class TierGate:
-    REPO_BASE_URL = "https://github.com/thenamitj/aerocrawl/blob/main"
+    REPO_BASE_URL = "https://github.com/Aerosend-Public/aerocrawl/blob/main"
 
     def __init__(self, tiers: list[_Tier], feature_tiers: dict[str, int]) -> None:
         self._tiers = {t.id: t for t in tiers}

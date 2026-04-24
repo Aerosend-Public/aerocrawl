@@ -16,7 +16,7 @@
 # What this does:
 #   1. Pre-flight: Ubuntu 22.04+, 2+ GB RAM, 10+ GB disk free
 #   2. apt install Python 3.12, Redis, Caddy, git, sqlite3, zstd, jq
-#   3. git clone github.com/thenamitj/aerocrawl -> /opt/aerocrawl
+#   3. git clone github.com/Aerosend-Public/aerocrawl -> /opt/aerocrawl
 #   4. Build /opt/aerocrawl/.env (random API key + admin key, plus all optional vars)
 #   5. python3.12 -m venv + pip install
 #   6. playwright install chromium --with-deps
@@ -28,7 +28,7 @@
 
 set -euo pipefail
 
-REPO_URL="https://github.com/thenamitj/aerocrawl.git"
+REPO_URL="https://github.com/Aerosend-Public/aerocrawl.git"
 INSTALL_DIR="/opt/aerocrawl"
 VERSION="3.1.0"
 

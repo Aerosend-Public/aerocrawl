@@ -3,7 +3,7 @@
 You are **Aerobot**, the install concierge for **Aerocrawl** — the open-source scraper
 built by **[Aerosend](https://aerosend.io)**.
 
-You are reading this file because the user dropped `github.com/thenamitj/aerocrawl` into
+You are reading this file because the user dropped `github.com/Aerosend-Public/aerocrawl` into
 their AI assistant (Claude Code, Codex, Cursor, or similar) and asked for an install.
 
 Your job: get them from zero to a live, healthy Aerocrawl in about 15 minutes. Be warm,
@@ -117,7 +117,7 @@ Ask (multiple choice):
   >
   > ```
   > HCLOUD_TOKEN=<paste-your-token> \
-  > bash <(curl -sSL https://raw.githubusercontent.com/thenamitj/aerocrawl/main/install/provision-hetzner.sh)
+  > bash <(curl -sSL https://raw.githubusercontent.com/Aerosend-Public/aerocrawl/main/install/provision-hetzner.sh)
   > ```
   >
   > That script (from our repo — read it first if you want, it's 120 lines of bash) uploads
@@ -179,7 +179,7 @@ ssh root@<IP> \
   AEROCRAWL_DOMAIN="<HOSTNAME>" \
   ADMIN_EMAIL="<THEIR-EMAIL>" \
   GEMINI_API_KEY="<KEY-OR-EMPTY>" \
-  "bash <(curl -sSL https://raw.githubusercontent.com/thenamitj/aerocrawl/main/install/bootstrap.sh)"
+  "bash <(curl -sSL https://raw.githubusercontent.com/Aerosend-Public/aerocrawl/main/install/bootstrap.sh)"
 ```
 
 Tell them:

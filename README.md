@@ -25,7 +25,7 @@ You'll need:
 
 Open Claude Code (or Codex, Cursor), and say:
 
-> "Install github.com/thenamitj/aerocrawl"
+> "Install github.com/Aerosend-Public/aerocrawl"
 
 Your AI reads [`AGENTS.md`](AGENTS.md) and becomes **Aerobot** — the install concierge who
 walks you through buying a VPS, pointing DNS, collecting the API keys you want, and running
@@ -44,7 +44,7 @@ If you already have an Ubuntu VPS:
 ssh root@<your-vps> \
   AEROCRAWL_DOMAIN="scraper.example.com" \
   ADMIN_EMAIL="you@example.com" \
-  "bash <(curl -sSL https://raw.githubusercontent.com/thenamitj/aerocrawl/main/install/bootstrap.sh)"
+  "bash <(curl -sSL https://raw.githubusercontent.com/Aerosend-Public/aerocrawl/main/install/bootstrap.sh)"
 ```
 
 (Substitute your hostname and email.)
