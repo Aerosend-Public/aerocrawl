@@ -1,0 +1,85 @@
+# capabilities.yaml — single source of truth for Aerocrawl's capability tiers.
+# Read by install/check-capabilities.py, the app's runtime tier gate, and AGENTS.md.
+version: 1
+
+tiers:
+  - id: 0
+    name: "Core"
+    requires: []
+    always_on: true
+    unlocks:
+      - "Smart routes (GitHub, Hacker News, arXiv, PubMed, DOI, OpenAlex, RSS)"
+      - "Static httpx fetch"
+      - "Playwright + stealth (no proxy)"
+      - "PDF text extraction (pymupdf, pdfplumber)"
+      - "SQLite cache + usage logging"
+      - "Redis cache (24h TTL) + async /crawl, /batch, /extract"
+
+  - id: 1
+    name: "LLM features"
+    requires:
+      - env: GEMINI_API_KEY
+        how_to_get: install/guides/03-get-gemini-key.md
+        cost: "Free tier — generous quota, no card required"
+    unlocks:
+      - "Schema-first /scrape extract (LLM over markdown)"
+      - "/search endpoint (Brave/DDG HTML scrape → ranked results)"
+      - "Image vision (chart/pricing/comparison OCR)"
+      - "Visual mode (full-page screenshot → structured data)"
+      - "Scan-PDF fallback when pymupdf fails"
+
+  - id: 2
+    name: "Reddit + paywall bypass"
+    requires:
+      - env: REDDIT_PROXY_URL
+        how_to_get: install/guides/04-cloudflare-workers.md#reddit
+        cost: "Free — Cloudflare Workers free tier (100k req/day)"
+      - env: CF_PROXY_URL
+        how_to_get: install/guides/04-cloudflare-workers.md#general
+        cost: "Free — same Cloudflare account"
+    unlocks:
+      - "Reddit JSON scraping (bypass VPS IP block)"
+      - "Extra paywall bypass layer for non-Reddit sites"
+
+  - id: 3
+    name: "Residential proxies"
+    requires:
+      - env: PROXY_URL
+        how_to_get: install/guides/05-proxybase.md
+        cost: "~$8–30/mo (ProxyBase)"
+    unlocks:
+      - "Cloudflare-protected sites"
+      - "Higher success rate on anti-bot shields"
+
+  - id: 4
+    name: "Hard anti-bot"
+    requires:
+      - env: TAVILY_API_KEY
+        how_to_get: install/guides/06-tavily.md
+        cost: "~$0.008/scrape (pay-as-you-go)"
+    unlocks:
+      - "Tavily Extract fallback"
+
+  - id: 5
+    name: "DataDome / PerimeterX class"
+    requires:
+      - env: ZYTE_API_KEY
+        how_to_get: install/guides/07-zyte.md
+        cost: "~$0.50–$5 per 1000 scrapes"
+    unlocks:
+      - "Zyte web unlocker (G2, Capterra, Crunchbase, Quora, Glassdoor, X/Twitter, LinkedIn)"
+      - "Per-month budget cap via ZYTE_BUDGET_USD"
+
+# Feature → tier map: used by the runtime gate to return helpful errors.
+# Key is the feature name the app reports; value is the minimum tier id.
+feature_tiers:
+  llm_extract: 1
+  search: 1
+  image_vision: 1
+  visual_mode: 1
+  pdf_scan_fallback: 1
+  reddit_scrape: 2
+  cf_paywall_bypass: 2
+  residential_proxy: 3
+  tavily_extract: 4
+  zyte_unlock: 5
