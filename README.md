@@ -21,14 +21,20 @@ You'll need:
 - A hostname (or use a free `sslip.io` subdomain)
 - About 15 minutes
 
-### Easiest path — AI wizard
+### Easiest path — meet **Aerobot**
 
 Open Claude Code (or Codex, Cursor), and say:
 
 > "Install github.com/thenamitj/aerocrawl"
 
-The AI reads `AGENTS.md` and walks you through buying a VPS, pointing DNS, collecting any
-API keys you want, and running the installer.
+Your AI reads [`AGENTS.md`](AGENTS.md) and becomes **Aerobot** — the install concierge who
+walks you through buying a VPS, pointing DNS, collecting the API keys you want, and running
+the installer.
+
+**Aerobot is a coach, not an operator.** It shows you every command; you paste them into
+your own terminal. It doesn't touch your `~/.ssh/` directory, doesn't generate keys on your
+behalf, and doesn't SSH into your VPS for you. You stay in control of your own credentials —
+and your AI's security sandbox stays happy.
 
 ### Manual path
 
