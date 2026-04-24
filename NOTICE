@@ -1,0 +1,56 @@
+Aerocrawl — open-source web scraping, built by Aerosend.
+Copyright (C) 2026 Aerosend, Inc.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, version 3.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+---
+
+Third-party components:
+
+- pymupdf (PyMuPDF)
+    License: AGPL-3.0-or-later
+    https://github.com/pymupdf/PyMuPDF
+    Used for: PDF text extraction. This is the reason Aerocrawl
+    itself is AGPL-3.0 — pymupdf's license requires any distribution
+    containing it to be AGPL-compatible.
+
+- Playwright
+    License: Apache-2.0
+    https://github.com/microsoft/playwright
+    Used for: headless browser scraping with stealth patches.
+
+- FastAPI
+    License: MIT
+    https://github.com/tiangolo/fastapi
+
+- uvicorn
+    License: BSD-3-Clause
+    https://github.com/encode/uvicorn
+
+- Redis / redis-py
+    License: BSD-3-Clause
+    https://github.com/redis/redis-py
+
+- arq
+    License: MIT
+    https://github.com/samuelcolvin/arq
+
+- Caddy (installed separately on the VPS, not bundled)
+    License: Apache-2.0
+    https://caddyserver.com/
+
+- pdfplumber
+    License: MIT
+    https://github.com/jsvine/pdfplumber
+
+- Google Gemini API (used when GEMINI_API_KEY is set)
+    License: Google API terms — https://ai.google.dev/terms
+    NOT bundled; Aerocrawl calls the Google API on the user's behalf
+    using their key.
