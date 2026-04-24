@@ -1,0 +1,17 @@
+[Unit]
+Description=NinjaScraper Worker - Async Job Processor
+After=network.target redis-server.service ninjascraper.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/ninjascraper
+EnvironmentFile=/opt/ninjascraper/.env
+ExecStart=/opt/ninjascraper/.venv/bin/arq app.workers.run.WorkerSettings
+Restart=always
+RestartSec=5
+Environment=TZ=Asia/Kolkata
+ReadWritePaths=/opt/ninjascraper/data /tmp /root/.cache/ms-playwright
+
+[Install]
+WantedBy=multi-user.target

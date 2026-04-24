@@ -1,0 +1,13 @@
+[Unit]
+Description=Nightly NinjaScraper SQLite backup
+Requires=ninjascraper-backup.service
+
+[Timer]
+# Daily at 03:15 UTC (08:45 IST — low-traffic window)
+OnCalendar=*-*-* 03:15:00 UTC
+# Catch up if the VPS was offline during a scheduled run
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

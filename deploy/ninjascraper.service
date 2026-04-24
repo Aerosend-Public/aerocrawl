@@ -1,0 +1,17 @@
+[Unit]
+Description=NinjaScraper - Internal Scraping Service
+After=network.target redis-server.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/ninjascraper
+EnvironmentFile=/opt/ninjascraper/.env
+ExecStart=/opt/ninjascraper/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8001 --workers 1
+Restart=always
+RestartSec=5
+Environment=TZ=Asia/Kolkata
+ReadWritePaths=/opt/ninjascraper/data /tmp /root/.cache/ms-playwright
+
+[Install]
+WantedBy=multi-user.target
